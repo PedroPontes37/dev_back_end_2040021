@@ -1,11 +1,16 @@
 const express = require("express");
 const mysql = require("mysql");
 const { CLIENT_MULTI_RESULTS } = require("mysql/lib/protocol/constants/client");
+const swaggerAutogen = require("swagger-autogen");
 const app = express();
 const port = 3000;
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
+
+const swaggerUi = require("swagger-ui-express");
+const swaggerDocument = require("./swagger_output.json");
+app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
 //Fazer servidor arrancar e ficar a espera dos pedidos
 app.listen(port, () => {

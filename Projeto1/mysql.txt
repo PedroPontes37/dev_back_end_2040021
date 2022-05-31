@@ -1,0 +1,24 @@
+CREATE database projeto_backend;
+
+CREATE table videos(
+	id int auto_increment,
+	uploader varchar(45),
+	title varchar(45),
+	descriptionn varchar(45),
+	duration int,
+	url varchar(45),
+	views int,
+	likes int,
+	dislikes int,
+	comments varchar(45),
+	tags varchar(45),
+    	PRIMARY KEY (id)
+);
+
+insert into videos (uploader,title,descriptionn,duration,url,views,likes,dislikes,comments,tags) values ("Francisco","Uma bandida","+10",15,"youtube.com",150,50,5,"espetacular","foryou");
+
+insert into videos (uploader,title,descriptionn,duration,url,views,likes,dislikes,comments,tags) values ("Tome","Piratas","+9",150,"youtube.com",1000,500,50,"muito bom","foryou");
+
+insert into videos (uploader,title,descriptionn,duration,url,views,likes,dislikes,comments,tags) values ("Joao","Futebol","+9",150,"youtube.com",100,5,2,"podia ser melhor","champions");
+
+insert into videos (uploader,title,descriptionn,duration,url,views,likes,dislikes,comments,tags) values ("Lourenço","Volei","+9",150,"youtube.com",100,5,2,"podia ser melhor","volei");

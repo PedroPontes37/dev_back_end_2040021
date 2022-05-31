@@ -23,6 +23,7 @@ var connection = mysql.createConnection({
 
 //Parte A
 //1
+//Listar todos os videos existentes na tabela
 app.get("/videos", function (request, response) {
   connection.query(
     "select*from projeto_backend.videos",
@@ -33,19 +34,23 @@ app.get("/videos", function (request, response) {
 });
 
 //2
+//Adicionar video a tabela mandando msg de feedback
 app.post("/videos", function (request, response) {
   var newVideo = request.body;
   connection.query(
     "INSERT projeto_backend.videos set ?",
     [newVideo],
     function (err, rows, fields) {
-      response.send("ID: " + rows.insertId);
+      response.send(
+        "Video com o ID: " + rows.insertId + " adicionado com sucesso"
+      );
     }
   );
 });
 
 //3
-app.get("/videos/:uploader", function (request, response) {
+//Enviar todos os videos de um determinado uploader
+app.get("/videos/uploader/:uploader", function (request, response) {
   var uploader = request.params.uploader;
   connection.query(
     "select*from projeto_backend.videos where uploader = ?",
@@ -57,27 +62,31 @@ app.get("/videos/:uploader", function (request, response) {
 });
 
 //4
-//ver com o prof
-app.put("/videos/:id", function (request, response) {
+//Incrementar likes
+app.put("/videos/:id/likes", function (request, response) {
   var id = request.params.id;
-  var likes = request.body;
-  var likesAtuais = "select from projeto_backend.videos.id.likes";
   connection.query(
-    "UPDATE videos set ? where id = ? ",
-    [likesAtuais + likes, id],
+    "UPDATE projeto_backend.videos SET likes = likes+1 WHERE id = ?  ",
+    [id],
     function (err, rows, fields) {
-      response.send(rows);
+      connection.query(
+        "select * from projeto_backend.videos WHERE id = ?  ",
+        [id],
+        function (err, rows, fields) {
+          response.send(rows);
+        }
+      );
     }
   );
 });
 
 //5
-//ver com o prof
-app.get("/videos/:tags", function (request, response) {
-  var tag = request.params.tags;
+//Listar todos os vídeos que contenham determinado tag
+app.get("/videos/tags", function (request, response) {
+  var tags = request.query.tags;
   connection.query(
     "select*from projeto_backend.videos where tags = ?",
-    [tag],
+    [tags],
     function (err, rows, fields) {
       response.send(rows);
     }
@@ -86,11 +95,11 @@ app.get("/videos/:tags", function (request, response) {
 
 //Parte B
 //1
-//ver com o prof
-app.get("/videos/:id", function (request, response) {
+//Selecionar apenas um vídeo pelo seu ID
+app.get("/videos/id/:id", function (request, response) {
   var id = request.params.id;
   connection.query(
-    "select from projeto_backend.videos where id = ?",
+    "select * from projeto_backend.videos where id = ?",
     [id],
     function (err, rows, fields) {
       response.send(rows);
@@ -99,24 +108,25 @@ app.get("/videos/:id", function (request, response) {
 });
 
 //2
-//perguntar prof
+// apagar via query
 app.delete("/videos", function (request, response) {
-  var id = request.body.id;
-  if (id != undefined) {
-    connection.query(
-      "delete from projeto_backend.videos where id = ?",
-      [id],
-      function (err, rows, fields) {
-        response.send("video com id: " + id + " apagado com sucesso");
+  var id = request.query.id;
+  connection.query(
+    "DELETE FROM projeto_backend.videos WHERE id = ?",
+    [id],
+    function (err, rows, fields) {
+      if (rows.affectedRows == 0) {
+        response.send("O ID escolhido não existe");
+      } else {
+        response.send("O video com o id: " + id + " foi eleminado com sucesso");
       }
-    );
-  } else {
-    response.send("Id nao existe");
-  }
+    }
+  );
 });
 
 //3
-app.get("/videos/:uploader", function (request, response) {
+//Selecionar todos os vídeos de um determinado uploader
+app.get("/videos/uploader/:uploader", function (request, response) {
   var uploader = request.params.uploader;
   connection.query(
     "select*from projeto_backend.videos where uploader = ?",
@@ -128,26 +138,39 @@ app.get("/videos/:uploader", function (request, response) {
 });
 
 //4
-//perguntar ao prof
-app.post("/videos/:id", function (request, response) {
+//Adicionar um novo comentario
+app.put("/videos/comments/:id", function (request, response) {
   var id = request.params.id;
-  var newComment = request.body;
+  var newComment = request.body.comments;
+  var atualComment;
+
   connection.query(
-    "INSERT projeto_backend.videos set ? where id = ?",
-    [newComment, id],
+    "SELECT comments from projeto_backend.videos  where id = ? ",
+    [id],
     function (err, rows, fields) {
-      response.send("Comment add: " + rows.insertId);
+      atualComment = rows[0].comments;
+      connection.query(
+        "UPDATE projeto_backend.videos set comments = ? where id = ?",
+        [atualComment + " / " + newComment, id],
+        function (err, rows, fields) {
+          response.send("Comentário adicionado: " + newComment);
+        }
+      );
     }
   );
 });
 
 //5
-app.get("/videoss", function (request, response) {
+//Ver os likes por forma crescente
+app.get("/videos/likes", function (request, response) {
+  var likesOrdem;
   connection.query(
-    "select*from projeto_backend.videos order by likes asc",
-
+    "select*from projeto_backend.videos",
     function (err, rows, fields) {
-      response.send(rows);
+      likesOrdem = rows.sort(function (likesA, likesB) {
+        return likesA.likes - likesB.likes;
+      });
+      response.send(likesOrdem);
     }
   );
 });
