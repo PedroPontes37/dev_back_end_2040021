@@ -27,6 +27,7 @@ sequelize
     console.error("Unable to connect", err);
   });
 
+//criar a tabela person
 const person = sequelize.define("person", {
   firstname: {
     type: DataTypes.STRING,
@@ -83,9 +84,25 @@ person
   });
 
 app.get("/persons", (req, res) => {
-  person.findAll().then((person) => {
-    res.send(person);
-  });
+  var id = req.query.id;
+
+  if (id == undefined) {
+    person.findAll().then((person) => {
+      res.send(person);
+    });
+  } else {
+    if (isNaN(id)) {
+      res.status(400).send("Invalid id supplied");
+    } else {
+      person.findByPk(id).then((person) => {
+        if (person == undefined) {
+          res.status(404).send("Cannot fiend id");
+        } else {
+          res.send(person);
+        }
+      });
+    }
+  }
 });
 
 app.post("/persons", (req, res) => {
@@ -95,13 +112,58 @@ app.post("/persons", (req, res) => {
 });
 
 app.delete("/persons", (req, res) => {
+  var id = req.body.id;
+  if (isNaN(id)) {
+    res.status(400).send("Invalid id supplied");
+  } else {
+    person
+      .destroy({
+        where: {
+          id: id,
+        },
+      })
+      .then((affectedRows) => {
+        if (affectedRows == 0) {
+          res.status(404).send("Cannot find id");
+        } else {
+          res.send("Number of deleted instances: " + affectedRows);
+        }
+      });
+  }
+});
+
+app.delete("/persons/:id", (req, res) => {
+  var id = req.params.id;
+  if (isNaN(id)) {
+    res.status(400).send("Invalid id supplied");
+  } else {
+    person
+      .destroy({
+        where: {
+          id: id,
+        },
+      })
+      .then((affectedRows) => {
+        if (affectedRows == 0) {
+          res.status(405).send("Cannot find id");
+        } else {
+          res.send("Number of deleted instances: " + affectedRows);
+        }
+      });
+  }
+});
+
+app.get("/persons/:idade/:profissao", (req, res) => {
+  var idade = req.params.idade;
+  var profession = req.params.profissao;
   person
-    .destroy({
+    .findAll({
       where: {
-        id: req.body,
+        age: idade,
+        profession: profession,
       },
     })
-    .then(() => {
-      console.log("Done");
+    .then((personresult) => {
+      res.send(personresult);
     });
 });
