@@ -1,0 +1,16 @@
+method: GET, path /employees, date Sat Jun 18 2022
+method: PUT, path /employees/:id/salary, date Sat Jun 18 2022
+method: PUT, path /employees/:id/salary, date Sat Jun 18 2022
+method: GET, path /employees/:id/salary, date Sat Jun 18 2022
+method: GET, path /employees/:id/salary, date Sat Jun 18 2022
+method: GET, path /employees/:id/salary, date Sat Jun 18 2022
+method: GET, path /employees/:id/salary, date Sat Jun 18 2022
+method: GET, path /employees, date Sat Jun 18 2022
+method: GET, path /employees, date Sat Jun 18 2022
+method: POST, path /employees, date Sat Jun 18 2022
+method: DELETE, path /employees, date Sat Jun 18 2022
+method: DELETE, path /employees, date Sat Jun 18 2022
+method: PUT, path /employees/:id/salary, date Sat Jun 18 2022
+method: PUT, path /employees/:id/salary, date Sat Jun 18 2022
+method: PUT, path /employees/:id/salary, date Sat Jun 18 2022
+method: GET, path /employees/:id/salary, date Sat Jun 18 2022

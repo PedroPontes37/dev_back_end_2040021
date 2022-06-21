@@ -156,6 +156,7 @@ app.delete("/persons/:id", (req, res) => {
 app.get("/persons/:idade/:profissao", (req, res) => {
   var idade = req.params.idade;
   var profession = req.params.profissao;
+
   person
     .findAll({
       where: {
@@ -165,5 +166,29 @@ app.get("/persons/:idade/:profissao", (req, res) => {
     })
     .then((personresult) => {
       res.send(personresult);
+    });
+});
+
+app.put("/persons/:id", (req, res) => {
+  person
+    .update(req.body, {
+      where: {
+        id: req.params.id,
+      },
+    })
+    .then((result) => {
+      if (result == 0) {
+        res.send("Cannot find id");
+      } else {
+        person
+          .findAll({
+            where: {
+              id: req.params.id,
+            },
+          })
+          .then((result) => {
+            res.send(result);
+          });
+      }
     });
 });
